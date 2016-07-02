@@ -1,4 +1,3 @@
-// Package smpp allows sending SMS via SMPP server
 package smpp
 
 import (
