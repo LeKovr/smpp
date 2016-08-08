@@ -31,7 +31,7 @@ type Flags struct {
 
 	BalFormat  string `long:"smpp_bal"               description:"SMPP account balance request format"`
 	BalKey     string `long:"smpp_key"               description:"SMPP account balance request key"`
-	MinBalance int    `long:"minbalance" default:"1" description:"Do not send SMS if balance is lower than"`
+	MinBalance int    `long:"smpp_minbalance" default:"1" description:"Do not send SMS if balance is lower than"`
 }
 
 // -----------------------------------------------------------------------------
