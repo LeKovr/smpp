@@ -3,11 +3,10 @@ package smpp
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/CodeMonkeyKevin/smpp34"
-
-	"github.com/LeKovr/go-base/logger"
 )
 
 // Params - attributes for SubmitSm
@@ -37,14 +36,14 @@ type Flags struct {
 // -----------------------------------------------------------------------------
 
 // Send sends given code to phone number via SMS
-func Send(cfg *Flags, log *logger.Log, phone, code string) error {
+func Send(cfg *Flags, logger *log.Logger, phone, code string) error {
 
 	if cfg.SmppHost == "" || cfg.SmppHost == "none" {
 		// log only mode
-		log.Infof("Log SMS to %s with code %s", phone, code)
+		logger.Printf("info: Log SMS to %s with code %s", phone, code)
 		return nil
 	}
-	log.Infof("Send SMS to %s with code %s", phone, code)
+	logger.Printf("info: Send SMS to %s with code %s", phone, code)
 	// connect and bind
 
 	//log.Printf("Connect %s /%s", cfgSmppId, pass)
@@ -60,7 +59,7 @@ func Send(cfg *Flags, log *logger.Log, phone, code string) error {
 		},
 	)
 	if err != nil {
-		log.Error("Connection Err:", err)
+		logger.Printf("error: Connection Err:", err)
 		return err
 	}
 
@@ -73,7 +72,7 @@ func Send(cfg *Flags, log *logger.Log, phone, code string) error {
 
 	// Pdu gen errors
 	if err != nil {
-		log.Errorf("SubmitSm to %s err: %v", phone, err)
+		logger.Printf("error: SubmitSm to %s err: %v", phone, err)
 	}
 
 	// start reading PDUs
@@ -100,21 +99,21 @@ func Send(cfg *Flags, log *logger.Log, phone, code string) error {
 			if strings.Contains(f.String(), " stat:ACCEPTD ") {
 				// just accept
 			} else if strings.Contains(f.String(), " stat:DELIVRD ") {
-				log.Infof("Delivered SMS to %s", phone)
+				logger.Printf("info: Delivered SMS to %s", phone)
 				return nil
 			} else {
 				// someting wrong
-				log.Warningf("Unknown SMPP (seq %v) resp: %s", seq, f)
+				logger.Printf("warn: Unknown SMPP (seq %v) resp: %s", seq, f)
 				return nil
 			}
 			// Look at DeliverSmResp err
 			if err != nil {
-				log.Errorf("DeliverSmResp err: %+v", err)
+				logger.Printf("error: DeliverSmResp err: %+v", err)
 			}
 
-			log.Debugf("Got DeliverSm: %s", f)
+			logger.Printf("debug: Got DeliverSm: %s", f)
 		default:
-			log.Debugf("PDU ID:", pdu.GetHeader().Id)
+			logger.Printf("debug: PDU ID:", pdu.GetHeader().Id)
 		}
 	}
 
