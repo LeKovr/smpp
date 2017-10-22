@@ -66,7 +66,7 @@ func Send(cfg *Flags, logger *log.Logger, phone, code string) error {
 	// Send SubmitSm (source_addr, destination_addr, short_message string..
 	from := cfg.SmppFrom
 	msg := fmt.Sprintf(cfg.SmppMessageFormat, code)
-	//	seq, err := trx.SubmitSm(from, "+79184304451", "Access code is E45Rew4", &smpp34.Params{"registered_delivery": 1})
+	//	seq, err := trx.SubmitSm(from, "+79180000000", "Access code is E45Rew4", &smpp34.Params{"registered_delivery": 1})
 	seq, err := trx.SubmitSm(from, cfg.SmppPhonePrefix+phone, msg, Params)
 	// Should save seq to match with message_id
 
@@ -93,7 +93,7 @@ func Send(cfg *Flags, logger *log.Logger, phone, code string) error {
 			// Respond back to Deliver SM with Deliver SM Resp
 			err := trx.DeliverSmResp(pdu.GetHeader().Sequence, smpp34.ESME_ROK)
 
-			// destination_addr : +79184304451
+			// destination_addr : +79180000000
 			// short_message : id:119609566430770966 sub:001 dlvrd:001 submit date:1510160852 done date:1510160853 stat:DELIVRD err:000 text:a
 			f := pdu.GetField("short_message")
 			if strings.Contains(f.String(), " stat:ACCEPTD ") {
